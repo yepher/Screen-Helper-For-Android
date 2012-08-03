@@ -4,5 +4,6 @@
     <string name="hello_world">Disallow Screen Timeout While Plugged In. Just allow to run in background.</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">ScreenHelper</string>
+    <string name="screen_timeout">"Screen timeout: "</string>
 
 </resources>

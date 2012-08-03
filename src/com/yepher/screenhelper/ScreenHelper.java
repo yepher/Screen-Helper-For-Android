@@ -1,6 +1,9 @@
 package com.yepher.screenhelper;
 
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,14 +15,16 @@ import android.util.Log;
 public class ScreenHelper extends Application {
 	private static final String TAG = ScreenHelper.class.getSimpleName();
 	
-	PowerManager.WakeLock wakeLock;
+	private PowerManager.WakeLock wakeLock;
+	
+	private boolean isActive = true;
 	
 	@Override
     public void onCreate() {
         super.onCreate();
 
         if (PowerUtil.isConnected(this)) {
-        	disAllpwAutoScreenTimeout();
+        	disAllowAutoScreenTimeout();
         } else {
         	allowAutoScreenTimeout();
         }
@@ -28,16 +33,20 @@ public class ScreenHelper extends Application {
             public void onReceive(Context context, Intent intent) {
                 int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
                 if (plugged == BatteryManager.BATTERY_PLUGGED_AC) {
-                    disAllpwAutoScreenTimeout();
+                    disAllowAutoScreenTimeout();
+                    
                 } else if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
-                	disAllpwAutoScreenTimeout();
+                	disAllowAutoScreenTimeout();
+                	
                 } else if (plugged == 0) {
                     allowAutoScreenTimeout();
+                    
                 } else {
-                    Log.e(TAG, "Now sure what state the batter device is in. Will leave in current state.");
+                    Log.e(TAG, "Not sure what state the device is in. Will leave in current state.");
                 }
             }
         };
+
         IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(receiver, filter);
         
@@ -47,21 +56,62 @@ public class ScreenHelper extends Application {
 		allowAutoScreenTimeout();
 	}
 	
-	private void disAllpwAutoScreenTimeout() {
-		Log.e(TAG, "Will dis-allow screen timeout.");
+	public void disAllowAutoScreenTimeout() {
+		if (isActive == false) {
+			return;
+		}
+		
 		if (wakeLock == null) {
+			Log.e(TAG, "Will dis-allow screen timeout.");
+			 CharSequence title = "Screen timeout";
+             CharSequence detail = "Disabled";
+             CharSequence message = "Screen timeout - Disabled";
+             notify(title, detail, message);
+			
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 			wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Screen Helper");
 			wakeLock.acquire();
 		}
 	}
 	
-	private void allowAutoScreenTimeout() {
-		Log.e(TAG, "Will allow screen timeout.");
+	public void allowAutoScreenTimeout() {
 		if (wakeLock != null) {
+			Log.e(TAG, "Will allow screen timeout.");
+			
+			CharSequence title = "Screen timeout";
+            CharSequence detail = "Enabled";
+            CharSequence message = "Screen timeout - Enabled";
+            notify(title, detail, message);
+            
 			wakeLock.release();
 			wakeLock = null;
 		}
+	}
+	
+	private void notify(CharSequence title, CharSequence detail, CharSequence message) {
+
+		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification notification = new Notification(android.R.drawable.ic_lock_lock, message, 10000L);
+		
+		Intent myIntent = new Intent(ScreenHelper.this,ScreenHelper.class);
+		PendingIntent pendingIntent = PendingIntent.getActivity(ScreenHelper.this, 0, myIntent, 0);
+		notification.setLatestEventInfo(ScreenHelper.this, title, detail, pendingIntent);
+		notificationManager.notify(0, notification);
+		
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+		
+		if (isActive == false) {
+			allowAutoScreenTimeout();
+		} else if (PowerUtil.isConnected(this)) {
+        	disAllowAutoScreenTimeout();
+        } 
 	}
 	
 }

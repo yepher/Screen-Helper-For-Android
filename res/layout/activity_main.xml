@@ -4,6 +4,7 @@
     android:layout_height="match_parent" >
 
     <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -11,5 +12,22 @@
         android:padding="@dimen/padding_medium"
         android:text="@string/hello_world"
         tools:context=".MainActivity" />
+
+    <TextView
+        android:id="@+id/isPluggedInState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="@string/screen_timeout"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ToggleButton
+        android:id="@+id/disableMonitorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="24dp"
+        android:layout_toRightOf="@+id/isPluggedInState"
+         />
 
 </RelativeLayout>
