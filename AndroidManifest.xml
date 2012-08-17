@@ -4,6 +4,8 @@
     android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.WAKE_LOCK" /> 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
     
     <uses-sdk
         android:minSdkVersion="10"
@@ -23,12 +25,18 @@
             </intent-filter>
         </activity>
         
-        <receiver android:name="NotificationReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </receiver>
+        <receiver
+		    android:name="com.yepher.screenhelper.PostBootReceiver"
+		    android:enabled="true"
+		    android:exported="true"
+		    android:label="PostBootReceiver">
+		    <intent-filter>
+		        <action android:name="android.intent.action.BOOT_COMPLETED" />
+		    </intent-filter>
+		</receiver>
+		
     </application>
+    
+    
 
 </manifest>
