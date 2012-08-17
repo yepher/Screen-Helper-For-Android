@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
 		screenHelper.setActive(!toggleButton.isChecked());
 
 		toggleButton.setOnClickListener(new OnClickListener() {
+		    @Override
 			public void onClick(View v) {
 				Log.d(TAG, "Button Pressed: State: " + toggleButton.isChecked());
 				screenHelper.setActive(!toggleButton.isChecked());
