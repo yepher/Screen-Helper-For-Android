@@ -10,7 +10,7 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
 
-	private static final String TAG = MainActivity.class.getSimpleName();
+	private static final String TAG = "scrHelper_" + MainActivity.class.getSimpleName();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

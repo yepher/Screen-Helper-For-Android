@@ -91,13 +91,20 @@ public class ScreenHelper extends Application {
 	private void notify(CharSequence title, CharSequence detail, CharSequence message) {
 
 		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification notification = new Notification(android.R.drawable.ic_lock_lock, message, 10000L);
 		
-		Intent myIntent = new Intent(ScreenHelper.this,ScreenHelper.class);
-		PendingIntent pendingIntent = PendingIntent.getActivity(ScreenHelper.this, 0, myIntent, 0);
-		notification.setLatestEventInfo(ScreenHelper.this, title, detail, pendingIntent);
+		int icon = android.R.drawable.star_big_off;
+		if (wakeLock == null) {
+		    icon = android.R.drawable.star_big_on;
+		}
+		
+		Notification notification = new Notification(icon, message, 10000L);
+		
+		Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+		myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+ 
+		PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+		notification.setLatestEventInfo(getApplicationContext(), title, detail, pendingIntent);
 		notificationManager.notify(0, notification);
-		
 	}
 
 	public boolean isActive() {
